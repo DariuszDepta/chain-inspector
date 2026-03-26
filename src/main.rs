@@ -86,6 +86,7 @@ async fn main() -> anyhow::Result<()> {
     let mut height = get_latest_block_height(URL).await?;
     println!("last block height = {}", height);
     let mut max_length = 0;
+    let mut count = 1;
     while height > 0 {
         let hashes = get_transaction_hashes(URL, height).await?;
         if !hashes.is_empty() {
@@ -99,7 +100,10 @@ async fn main() -> anyhow::Result<()> {
                     if length > max_length {
                         max_length = length;
                     }
-                    println!("> {} | {}", max_length, length);
+                    println!(
+                        "max-size = {}   tx-size = {}   blocks checked = {}",
+                        max_length, length, count
+                    );
                     if max_length >= SIZE_THRESHOLD {
                         println!("SIZE THRESHOLD EXCEEDED!\nhash={}\nheight={}", hash, height);
                         std::process::exit(1);
@@ -108,6 +112,7 @@ async fn main() -> anyhow::Result<()> {
             }
         }
         height -= 1;
+        count += 1;
     }
     Ok(())
 }
