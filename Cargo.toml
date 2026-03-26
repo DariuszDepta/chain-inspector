@@ -2,7 +2,9 @@
 name = "chain-inspector"
 version = "0.0.1"
 authors = ["Dariusz Depta <depta@engos.de>"]
+description = "Blockchain inspector"
 repository = "https://github.com/DariuszDepta/chain-inspector.git"
+license = "MIT OR Apache-2.0"
 edition = "2024"
 
 [dependencies]
