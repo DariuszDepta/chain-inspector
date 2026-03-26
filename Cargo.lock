@@ -95,6 +95,7 @@ name = "chain-inspector"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "base64",
  "reqwest",
  "serde_json",
  "tokio",
