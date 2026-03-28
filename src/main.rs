@@ -5,8 +5,6 @@ const NEUTRON_RPC: &str = "https://rpc-lb.neutron.org:443";
 const OSMOSIS_RPC: &str = "https://osmosis-rpc.publicnode.com:443";
 const COSMOS_RPC: &str = "https://cosmos-rpc.publicnode.com:443";
 
-const SIZE_THRESHOLD: usize = 256 * 1024; // 256kB
-
 /// Gets the height of the latest block.
 ///
 /// Equivalent of:
@@ -105,27 +103,21 @@ async fn main() -> anyhow::Result<()> {
     }
   };
   let mut height = get_latest_block_height(url).await?;
-  println!("last block height = {}", height);
-  let mut max_length = 0;
+  let mut max_size = 0;
   let mut count = 1;
   while height > 0 {
     let hashes = get_transaction_hashes(url, height).await?;
     if !hashes.is_empty() {
-      println!("height = {}", height);
       for hash in &hashes {
-        let (msg_types, length) = get_msg_types(url, hash).await?;
+        let (msg_types, size) = get_msg_types(url, hash).await?;
         if !msg_types.is_empty() {
           for msg_type in &msg_types {
             println!("  {}", msg_type);
           }
-          if length > max_length {
-            max_length = length;
+          if size > max_size {
+            max_size = size;
           }
-          println!("max-size = {}   tx-size = {}   blocks checked = {}", max_length, length, count);
-          if max_length >= SIZE_THRESHOLD {
-            println!("SIZE THRESHOLD EXCEEDED!\nhash={}\nheight={}", hash, height);
-            std::process::exit(1);
-          }
+          println!("{:20} {:20} {:20} {:20} {}", height, max_size, size, count, hash);
         }
       }
     }
